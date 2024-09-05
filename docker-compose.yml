@@ -1,0 +1,43 @@
+# for local dev
+services:
+  mon-proxy:
+    image: mon-proxy:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - sock:/run/mon-proxy
+    environment:
+      - SOURCE_SOCKET=/var/run/docker.sock
+      - DESTINATION_SOCKET_1=/run/mon-proxy/filtered-docker-1.sock
+      - REQUIRED_LABEL_1=monitoring.enabled=true
+      - DESTINATION_SOCKET_2=/run/mon-proxy/filtered-docker-2.sock
+      - REQUIRED_LABEL_2=tenant.monitoring.enabled=true
+    restart: unless-stopped
+
+  test-client:
+    image: docker:dind
+    depends_on:
+      - mon-proxy
+    volumes:
+      - sock:/run/mon-proxy:ro
+    environment:
+      - DOCKER_HOST=unix:///run/mon-proxy/filtered-docker.sock
+    command: ["/bin/sleep", "Infinity"]
+
+  allowed:
+    image: alpine:latest
+    depends_on:
+      - test-client
+    labels:
+      - monitoring.enabled=true
+    command: ["/bin/sleep", "Infinity"]
+
+  denied:
+    image: alpine:latest
+    depends_on:
+      - test-client
+    labels:
+      - monitoring.enabled=false
+    command: ["/bin/sleep", "Infinity"]
+
+volumes:
+  sock:
