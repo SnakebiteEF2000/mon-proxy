@@ -1,4 +1,3 @@
-# for local dev
 services:
   mon-proxy:
     image: mon-proxy:latest
@@ -8,9 +7,9 @@ services:
     environment:
       - SOURCE_SOCKET=/var/run/docker.sock
       - DESTINATION_SOCKET_1=/run/mon-proxy/filtered-docker-1.sock
-      - REQUIRED_LABEL_1=monitoring.enabled=true
+      - REQUIRED_LABEL_1=it.monitoring.enabled=true
       - DESTINATION_SOCKET_2=/run/mon-proxy/filtered-docker-2.sock
-      - REQUIRED_LABEL_2=tenant.monitoring.enabled=true
+      - REQUIRED_LABEL_2=tenant.monitoring.enabled=false
     restart: unless-stopped
 
   test-client:
@@ -20,7 +19,7 @@ services:
     volumes:
       - sock:/run/mon-proxy:ro
     environment:
-      - DOCKER_HOST=unix:///run/mon-proxy/filtered-docker.sock
+      - DOCKER_HOST=unix:///run/mon-proxy/filtered-docker-1.sock
     command: ["/bin/sleep", "Infinity"]
 
   allowed:
@@ -29,6 +28,7 @@ services:
       - test-client
     labels:
       - monitoring.enabled=true
+      - it.monitoring.enabled=true
     command: ["/bin/sleep", "Infinity"]
 
   denied:
