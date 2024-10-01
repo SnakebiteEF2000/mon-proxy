@@ -3,14 +3,13 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/SnakebiteEF2000/mon-proxy)](https://goreportcard.com/badge/github.com/SnakebiteEF2000/mon-proxy)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-Mon-Proxy is a powerful tool designed to monitor Docker containers using Zabbix Agent 2 in multi-tenant environments. It provides a solution for filtering Docker API requests based on container labels, enabling fine-grained access control and monitoring capabilities.
+Mon-Proxy is a tool designed to filter Docker containers primarily for Zabbix Agent 2 in multi-tenant environments. It provides a solution for filtering Docker API requests based on container labels, enabling access control and monitoring capabilities. The Filtering is only concerned on ```/containers/json``` every other GET request to the docker API will be proxied!
 
 ## 🌟 Features
 
-- Filter Docker API requests based on container labels
+- Filter Docker container list requests based on container labels
 - Support for multiple output sockets
-- Seamless integration with Zabbix Agent 2
-- Easy permission management for multi-tenant environments
+- Seamless integration with existing tools -> every request other than listing containers just gets proxied
 - Configurable through environment variables
 
 ## 🚀 Getting Started
@@ -18,7 +17,7 @@ Mon-Proxy is a powerful tool designed to monitor Docker containers using Zabbix 
 ### Prerequisites
 
 - Docker
-- Go 1.16 or higher
+- Go 1.22 or higher
 
 ### Installation
 
@@ -37,7 +36,9 @@ docker build -t mon-proxy:latest .
 
 ### Configuration
 
-Mon-Proxy is configured using environment variables. The main configuration file can be found in:
+Mon-Proxy is configured using environment variables. The main configuration setup can be found in:
+
+[config.go](https://github.com/SnakebiteEF2000/mon-proxy/blob/main/cmd/mon-proxy/config.go)
 
 ```go
 func GetSocketConfigs() []proxy.ProxyConfig {
@@ -134,7 +135,7 @@ You can test the proxy by using the `test-client` service in the Docker Compose 
 
 To set up a development environment:
 
-1. Install Go 1.16 or higher
+1. Install Go 1.22 or higher
 2. Clone the repository
 3. Run `go mod download` to install dependencies
 
@@ -158,21 +159,3 @@ You can use the provided VS Code launch configuration for debugging:
 ## 📜 License
 
 This project is licensed under the GNU General Public License v3.0. See the LICENSE file for details.
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 📞 Support
-
-If you have any questions or need support, please open an issue in the GitHub repository.
-
----
-
-We hope you find Mon-Proxy useful for your Docker monitoring needs in multi-tenant environments!
